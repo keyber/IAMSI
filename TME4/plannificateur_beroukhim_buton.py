@@ -133,11 +133,11 @@ def execute_glucose(executable_path, contraintes_path):
     return map(int, result)
 
 
-def write_calendar(planing, variables, equipes, output_path, verbose):
-    rencontres_par_jour = [[] for _ in range(planing.nj)]
+def write_calendar(planning, variables, equipes, output_path, verbose):
+    rencontres_par_jour = [[] for _ in range(planning.nj)]
     for var in variables:
         if var > 0:
-            j, x, y = planing.decodage(var)
+            j, x, y = planning.decodage(var)
             rencontres_par_jour[j].append([str(j), equipes[x], equipes[y]])  #equipes[x] + " vs " + equipes[y])
     
     affiche = verbose and sum(len(r) for r in rencontres_par_jour) < 16
@@ -147,7 +147,8 @@ def write_calendar(planing, variables, equipes, output_path, verbose):
         writer.writerow(["jour", "domicile", "extérieur"])
         for rencontre_du_jour in rencontres_par_jour:
             for r in rencontre_du_jour:
-                if affiche: print(r)
+                if affiche:
+                    print(r)
                 writer.writerow(r)
 
 
@@ -157,7 +158,7 @@ parser.add_argument('--nj', type=int, default=6)
 parser.add_argument('--equipes_path', type=str, default=None)
 parser.add_argument('--contraintes_path', type=str, default="contraintes.cnf")
 parser.add_argument('--glucose_path', type=str, default="../glucose-syrup-4.1/simp/glucose_static")
-parser.add_argument('--sortie_planing', type=str, default="planning.csv")
+parser.add_argument('--sortie_planning', type=str, default="planning.csv")
 parser.add_argument('--verbose', type=bool, default=True)
 
 
@@ -182,10 +183,10 @@ def main(params):
             print(e)  #non satisfiable
         return 0
     
-    write_calendar(planning, variables, equipes, params.sortie_planing, params.verbose)
+    write_calendar(planning, variables, equipes, params.sortie_planning, params.verbose)
     
     if params.verbose:
-        print("csv généré :", params.sortie_planing)
+        print("csv généré :", params.sortie_planning)
     
     return 1
 
