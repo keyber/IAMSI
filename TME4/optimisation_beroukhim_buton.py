@@ -18,12 +18,10 @@ def compute_lowest_duration(ne):
     while 1:
         params.nj = nj
         
-        #démarre un nouveau processus
+        #démarre unpreocessus et attend tout de suite qu'il finisse
         pool = multiprocessing.pool.ThreadPool(processes=1)
         async_result = pool.apply_async(plannificateur.main, (params,))
     
-        # do some other stuff in the main process
-        
         try:
             res = async_result.get(timeout=10)
         except multiprocessing.context.TimeoutError:
@@ -32,32 +30,15 @@ def compute_lowest_duration(ne):
             return ne, nj, "minimal"
         
         nj += 1
-        """
-        #on le démarre et attend tout de suite qu'il finisse
-        p.start()
-        p.join(.1)
-
-        if p.is_alive():
-            p.terminate()
-            p.join()
-            print(ne, "timeOut", nj)
-            return
-        """
     
 def main():
     import os
     if not os.path.isdir(const_path):
         os.mkdir(const_path)
     
-    """
-    pb : pas de résultat
-    for ne in range(3, 10):
-        p = multiprocessing.Process(target=lambda :compute_lowest_duration(ne))
-        p.start()
-    """
     equipes = range(3,11)
-    pool = multiprocessing.pool.ThreadPool()
-    resultat = pool.map(compute_lowest_duration, equipes)
+    pool = multiprocessing.pool.Pool()
+    resultat = pool.imap_unordered(compute_lowest_duration, equipes)
     for ne, nj, txt in resultat:
         print(ne, "équipes :", nj, "jours", txt)
     
